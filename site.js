@@ -61,3 +61,61 @@
     document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb.classList.contains('open'))close()});
   }
 })();
+
+/* editorial refresh: case-study section nav, gallery arrows, video */
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var main=document.querySelector('main');
+
+  /* section nav on case studies */
+  var hero=document.querySelector('.case-hero');
+  if(hero&&main){
+    var h2s=main.querySelectorAll('h2.serif'), heads=h2s.length>=2?h2s:main.querySelectorAll('.cs-h');
+    var items=[{el:hero,label:'Overview'}];
+    heads.forEach(function(h){items.push({el:h,label:h.getAttribute('data-short')||h.textContent.trim()})});
+    var docs=main.querySelector('.doc-links'); if(docs)items.push({el:docs,label:'Links'});
+    if(items.length>=3){
+      var nav=document.createElement('nav');nav.className='subnav';nav.setAttribute('aria-label','On this page');
+      var ul=document.createElement('ul');nav.appendChild(ul);
+      items.forEach(function(it,k){
+        var id=it.el.id||('sec-'+k);it.el.id=id;it.el.setAttribute('data-sec','');
+        var li=document.createElement('li'),a=document.createElement('a');a.href='#'+id;a.textContent=it.label;li.appendChild(a);ul.appendChild(li);it.a=a;
+      });
+      var after=document.querySelector('.project-info')||hero;
+      after.parentNode.insertBefore(nav,after.nextSibling);
+      function update(){
+        var y=window.scrollY+160,cur=items[0];
+        items.forEach(function(it){if(it.el.getBoundingClientRect().top+window.scrollY<=y)cur=it});
+        items.forEach(function(it){it.a.classList.toggle('on',it===cur)});
+        if(cur.a.offsetLeft<ul.scrollLeft||cur.a.offsetLeft+cur.a.offsetWidth>ul.scrollLeft+ul.clientWidth){ul.scrollLeft=cur.a.offsetLeft-24;}
+      }
+      window.addEventListener('scroll',update,{passive:true});update();
+    }
+  }
+
+  /* arrows for scrolling galleries */
+  document.querySelectorAll('.gallery').forEach(function(g){
+    var n=document.createElement('div');n.className='gallery-nav wrap';
+    n.innerHTML='<button type="button" aria-label="Previous images">&larr;</button><button type="button" aria-label="Next images">&rarr;</button>';
+    g.parentNode.insertBefore(n,g.nextSibling);
+    var b=n.querySelectorAll('button');
+    function step(dir){g.scrollBy({left:dir*Math.max(g.clientWidth*0.6,300),behavior:reduce?'auto':'smooth'})}
+    function sync(){b[0].disabled=g.scrollLeft<4;b[1].disabled=g.scrollLeft+g.clientWidth>=g.scrollWidth-4}
+    b[0].addEventListener('click',function(){step(-1)});b[1].addEventListener('click',function(){step(1)});
+    g.addEventListener('scroll',sync,{passive:true});window.addEventListener('resize',sync);setTimeout(sync,300);sync();
+  });
+
+  /* autoplay videos only in view, honour reduced motion, pause button */
+  document.querySelectorAll('.video').forEach(function(box){
+    var v=box.querySelector('video'),btn=box.querySelector('button');if(!v)return;
+    var userPaused=reduce;
+    function label(){if(btn)btn.textContent=v.paused?'Play':'Pause'}
+    if(reduce){v.removeAttribute('autoplay');v.pause();}
+    if(btn)btn.addEventListener('click',function(){if(v.paused){userPaused=false;v.play()}else{userPaused=true;v.pause()}label()});
+    v.addEventListener('play',label);v.addEventListener('pause',label);
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){if(!userPaused){var p=v.play();if(p&&p.catch)p.catch(function(){})}}else v.pause()})},{threshold:.35}).observe(v);
+    }
+    label();
+  });
+})();
