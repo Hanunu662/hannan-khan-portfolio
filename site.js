@@ -38,14 +38,14 @@
 
   /* magnetic buttons */
   if(fine&&!reduce){
-    document.querySelectorAll('.btn,.socials a,.connect button').forEach(function(b){
+    document.querySelectorAll('.magnetic').forEach(function(b){
       b.addEventListener('mousemove',function(e){var r=b.getBoundingClientRect();var x=(e.clientX-r.left-r.width/2)/r.width;var y=(e.clientY-r.top-r.height/2)/r.height;b.style.transform='translate('+(x*8)+'px,'+(y*6-2)+'px)';});
       b.addEventListener('mouseleave',function(){b.style.transform=''});
     });
   }
 
   /* lightbox for case study images */
-  var imgs=document.querySelectorAll('.case-img img');
+  var imgs=document.querySelectorAll('.case-img img, .phones img');
   if(imgs.length){
     var lb=document.createElement('div');lb.className='lb';lb.setAttribute('role','dialog');lb.setAttribute('aria-modal','true');
     lb.innerHTML='<button type="button" aria-label="Close">&times;</button><img alt=""><p></p>';
@@ -120,27 +120,24 @@
   });
 })();
 
-/* mobile menu */
+/* full-screen menu (mobile) */
 (function(){
   var top=document.querySelector('.top'),btn=top&&top.querySelector('.menu-btn');if(!btn)return;
-  btn.addEventListener('click',function(){var o=top.classList.toggle('is-open');btn.setAttribute('aria-expanded',o?'true':'false');btn.innerHTML=o?'&times;':'&#9776;';});
-  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&top.classList.contains('is-open')){btn.click();btn.focus();}});
+  var ov=document.createElement('div');ov.className='overlay';ov.id='menu';ov.setAttribute('aria-hidden','true');
+  var links='';top.querySelectorAll('.nav a').forEach(function(a){links+='<a href="'+a.getAttribute('href')+'">'+a.textContent+'</a>'});
+  ov.innerHTML='<nav aria-label="Menu">'+links+'</nav><div class="foot"><a href="mailto:hanunu662@gmail.com">hanunu662@gmail.com</a><a href="https://www.linkedin.com/in/hannan-khan-906102208" target="_blank" rel="noopener">LinkedIn</a><a href="https://www.instagram.com/hannankhan661" target="_blank" rel="noopener">Instagram</a></div>';
+  document.body.appendChild(ov);btn.setAttribute('aria-controls','menu');
+  function set(o){ov.classList.toggle('on',o);ov.setAttribute('aria-hidden',o?'false':'true');btn.setAttribute('aria-expanded',o?'true':'false');btn.textContent=o?'Close':'Menu';document.body.style.overflow=o?'hidden':'';}
+  btn.addEventListener('click',function(){set(!ov.classList.contains('on'))});
+  ov.addEventListener('click',function(e){if(e.target.tagName==='A')set(false)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&ov.classList.contains('on')){set(false);btn.focus()}});
 })();
 
-/* sketchbook: nav shadow, autoplay screen slideshows, polaroid captions */
+/* videos inside project art: play only while visible */
 (function(){
   var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var top=document.querySelector('.top');
-  if(top){var f=function(){top.classList.toggle('scrolled',window.scrollY>8)};window.addEventListener('scroll',f,{passive:true});f();}
-  document.querySelectorAll('.screen[data-frames]').forEach(function(sc){
-    var frames=sc.getAttribute('data-frames').split('|');if(frames.length<2||reduce)return;
-    var base=sc.querySelector('img'),layer=document.createElement('img');layer.className='f2';layer.alt='';sc.appendChild(layer);
-    var i=0,t=null,delay=2400+Math.random()*900;
-    function next(){i=(i+1)%frames.length;layer.src=frames[i];layer.onload=function(){layer.classList.add('show');setTimeout(function(){base.src=frames[i];layer.classList.remove('show')},950)}}
-    if('IntersectionObserver' in window){new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){if(!t)t=setInterval(next,delay)}else{clearInterval(t);t=null}})},{threshold:.3}).observe(sc);}
-  });
-  document.querySelectorAll('.win-video video').forEach(function(v){
+  document.querySelectorAll('.art video').forEach(function(v){
     if(reduce){v.removeAttribute('autoplay');v.pause();return;}
-    if('IntersectionObserver' in window){new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){var p=v.play();if(p&&p.catch)p.catch(function(){})}else v.pause()})},{threshold:.3}).observe(v);}
+    if('IntersectionObserver' in window){new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){var p=v.play();if(p&&p.catch)p.catch(function(){})}else v.pause()})},{threshold:.25}).observe(v);}
   });
 })();
