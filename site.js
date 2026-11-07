@@ -119,3 +119,10 @@
     label();
   });
 })();
+
+/* mobile menu */
+(function(){
+  var top=document.querySelector('.top'),btn=top&&top.querySelector('.menu-btn');if(!btn)return;
+  btn.addEventListener('click',function(){var o=top.classList.toggle('is-open');btn.setAttribute('aria-expanded',o?'true':'false');btn.innerHTML=o?'&times;':'&#9776;';});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&top.classList.contains('is-open')){btn.click();btn.focus();}});
+})();
