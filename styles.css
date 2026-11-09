@@ -522,3 +522,8 @@ html{overflow-x:clip}
 .rows.three .row h3{font-size:clamp(26px,2.4vw,36px)}
 @media(max-width:1000px){.rows.three{grid-template-columns:1fr 1fr}}
 @media(max-width:820px){.rows.three{grid-template-columns:1fr}}
+.pol-phone{width:31%;height:66%;left:3%;top:22%}
+.pol-phone img{object-position:top}
+.sites.two{grid-template-columns:1fr 1fr;max-width:1000px}
+@media(max-width:900px){.sites.two{grid-template-columns:1fr}}
+section.apps.dark+section{padding-top:clamp(56px,8vw,110px)}

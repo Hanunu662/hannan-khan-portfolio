@@ -14,3 +14,9 @@
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+  from = "/case-gclass-platform"
+  to = "/case-gclass-drivers"
+  status = 301
+  force = true
