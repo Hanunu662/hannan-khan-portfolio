@@ -635,3 +635,55 @@ section.apps.dark+section{padding-top:clamp(56px,8vw,110px)}
 :root[data-theme="dark"] .dial .moon{opacity:0}
 :root[data-theme="dark"] .case-img img{box-shadow:0 1px 2px rgba(0,0,0,.4),0 14px 34px rgba(0,0,0,.35)}
 :root[data-theme="dark"] .polaroid,:root[data-theme="dark"] .row .art,:root[data-theme="dark"] .portrait{box-shadow:0 1px 2px rgba(0,0,0,.4),0 22px 44px rgba(0,0,0,.5)}
+
+/* screen recordings */
+.browser video{display:block;width:100%;height:auto;aspect-ratio:16/10;background:#101211;object-fit:cover}
+.browser .bar .rec-tag{margin-left:auto;display:flex;align-items:center;gap:6px;font-style:normal;font-size:11.5px;color:var(--winlabel)}
+.browser .bar .rec-tag::before{content:"";width:7px;height:7px;border-radius:50%;background:#FF3B30;display:block;animation:recblink 1.6s ease-in-out infinite}
+@keyframes recblink{50%{opacity:.25}}
+.win .screen .live{position:absolute;left:10px;top:10px;z-index:2;font-size:11px;font-weight:600;color:#fff;background:rgba(0,0,0,.55);border-radius:999px;padding:3px 9px;display:flex;align-items:center;gap:6px}
+.win .screen .live::before{content:"";width:6px;height:6px;border-radius:50%;background:#FF3B30;display:block}
+
+/* instagram */
+.ig{max-width:980px;margin:30px auto 34px}
+.ig-head{display:flex;gap:18px;align-items:center;margin-bottom:22px}
+.ig-av{width:78px;height:78px;border-radius:50%;object-fit:cover;flex:none;box-shadow:0 0 0 3px var(--paper),0 0 0 5px var(--rule)}
+.ig-head b{font-size:17px;font-weight:700}
+.ig-head p{margin:4px 0 0;font-size:14.5px;color:var(--muted);line-height:1.5}
+.ig-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ig-grid figure{margin:0}
+.ig-grid img{display:block;width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:6px;box-shadow:0 1px 2px rgba(0,0,0,.08),0 14px 30px rgba(0,0,0,.12);cursor:zoom-in;transition:transform .5s var(--ease)}
+.ig-grid figure:nth-child(odd) img{transform:rotate(-.6deg)}
+.ig-grid figure:nth-child(even) img{transform:rotate(.6deg)}
+.ig-grid img:hover{transform:rotate(0) translateY(-4px)}
+.ig-grid figcaption{font-family:var(--hand);font-size:21px;line-height:1.1;margin-top:10px;color:var(--ink)}
+@media(max-width:700px){.ig-grid{grid-template-columns:1fr 1fr;gap:10px}.ig-grid figcaption{font-size:18px}}
+
+/* count-up numbers stay steady while they tick */
+.facts div b,.impact b,.key-stat b{font-variant-numeric:tabular-nums}
+
+/* headline draw-in */
+.split .w{display:inline-block;opacity:0;transform:translateY(.45em) rotate(2deg);filter:blur(6px);animation:wordin .9s var(--ease) forwards;animation-delay:calc(var(--i) * 75ms + 120ms)}
+@keyframes wordin{to{opacity:1;transform:none;filter:blur(0)}}
+.split .draw path{transition-delay:1s}
+html.js h1:not(.split){opacity:0;animation:h1safe 0s 1.4s forwards}
+@keyframes h1safe{to{opacity:1}}
+
+/* moving sketchbook: polaroids, windows and notes drift as you scroll */
+.collage>*,.stage>*{will-change:translate}
+
+/* smooth page changes */
+@view-transition{navigation:auto}
+.top{view-transition-name:site-top}
+::view-transition-old(root){animation:vtout .25s ease both}
+::view-transition-new(root){animation:vtin .45s var(--ease,cubic-bezier(.2,.7,.2,1)) both}
+@keyframes vtout{to{opacity:0;transform:translateY(-10px)}}
+@keyframes vtin{from{opacity:0;transform:translateY(14px)}}
+
+@media (prefers-reduced-motion: reduce){
+  .split .w{opacity:1;transform:none;filter:none;animation:none}
+  html.js h1:not(.split){opacity:1;animation:none}
+  .browser .bar .rec-tag::before{animation:none}
+  @view-transition{navigation:none}
+  ::view-transition-old(root),::view-transition-new(root){animation:none}
+}
