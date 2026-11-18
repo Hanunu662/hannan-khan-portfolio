@@ -20,3 +20,17 @@
   to = "/case-gclass-drivers"
   status = 301
   force = true
+[[redirects]]
+from = "/assets/media/*"
+to = "/:splat"
+status = 200
+
+[[redirects]]
+from = "/assets/walkthroughs/*"
+to = "/:splat"
+status = 200
+
+[[redirects]]
+from = "/assets/mlc/section-google.jpg"
+to = "/mlc-section-google.jpg"
+status = 200
